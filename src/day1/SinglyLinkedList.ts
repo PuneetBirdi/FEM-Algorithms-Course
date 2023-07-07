@@ -23,8 +23,15 @@ export default class SinglyLinkedList<T> {
 			}
 		}
     insertAt(item: T, idx: number): void {
-
-}
+			const newNode = new ListNode<T>(item)
+			let currentNode = this.head
+			for (let i = 0; i < idx; i++) {
+				if(currentNode!.next) {
+					currentNode = currentNode!.next
+				}
+			}
+			
+		}
     append(item: T): void {
 			const newNode = new ListNode<T>(item)
 			if(!this.head || !this.tail) {
@@ -44,8 +51,14 @@ export default class SinglyLinkedList<T> {
 
 }
     get(idx: number): T | undefined {
-
-}
+			let current = this.head
+			for (let i = 0; i < idx; i++) {
+				if(current!.next) {
+					current = current!.next
+				}
+			}
+			return current?.value
+		}
     removeAt(idx: number): T | undefined {
 
 }
