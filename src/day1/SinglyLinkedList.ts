@@ -24,6 +24,8 @@ export default class SinglyLinkedList<T> {
 			node.next = currHead
 			currHead.prev = node
 			this.head = node
+			this.length++
+			console.log("PREPEND", this)
 		}
     insertAt(item: T, idx: number): void {
 			const node = {value:item} as Node<T>
@@ -48,6 +50,8 @@ export default class SinglyLinkedList<T> {
 				postNode.prev = node
 				node.next = postNode
 			}
+			this.length++
+			console.log("INSERT AT", this)
 		}
     append(item: T): void {
 			const node = {value: item} as Node<T>
@@ -57,12 +61,22 @@ export default class SinglyLinkedList<T> {
 			this.tail.next = node
 			node.prev = this.tail
 			this.tail = node
+			this.length++
+			console.log("APPEND", this)
 		}
     remove(item: T): T | undefined {
 			let curr = this.head
 			let target
+
 			if(!this.head) {
 				return undefined
+			}
+
+			if(this.head.value === item){
+				this.head = this.head?.next
+				this.length = Math.max(0, this.length -1)
+				console.log("REMOVE", this)
+				return curr?.value
 			}
 
 			for (let i = 0; i < this.length && curr; i++) {
@@ -74,20 +88,21 @@ export default class SinglyLinkedList<T> {
 			}
 			const preNode = target?.prev
 			const postNode = target?.next
-			
-			if(preNode) {
-				preNode.next = postNode
-			}
-			if(postNode) {
-				postNode.prev = preNode
-			}
 			if(target) {
+				if(preNode) {
+					preNode.next = postNode
+				}
+				if(postNode) {
+					postNode.prev = preNode
+				}
 				target.next = undefined
 				target.prev = undefined
+				this.length = Math.max(0, this.length -1)
 			}
+			console.log("REMOVE", this)
 			return target?.value
 		}
-    get(idx: number): T | undefined | null {
+    get(idx: number): T | undefined {
 			let curr = this.head
 
 			if(!this.head) {
@@ -96,19 +111,27 @@ export default class SinglyLinkedList<T> {
 			for (let i = 0; i < idx && curr; i++) {
 				curr = curr.next
 			}
+			console.log("GET", this)
 			return curr?.value
 		}
     removeAt(idx: number): T | undefined {
 			let target = this.head
 
-			if(!this.head) {
+			if(!target) {
 				return undefined
+			}
+			if(idx === 0){
+				this.head = this.head?.next
+				this.length = Math.max(0, this.length -1)
+				return target.value
 			}
 			for (let i = 0; i < idx && target; i++) {
 				target = target.next
 			}
+
 			const preNode = target?.prev
 			const postNode = target?.next
+
 			if(preNode) {
 				preNode.next = postNode
 			}
@@ -119,6 +142,8 @@ export default class SinglyLinkedList<T> {
 				target.next = undefined
 				target.prev = undefined
 			}
+			this.length = Math.max(0, this.length -1)
+			console.log("REMOVE AT", this)
 			return target?.value
 		}
 }
