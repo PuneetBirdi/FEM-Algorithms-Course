@@ -74,7 +74,17 @@ export default class SinglyLinkedList<T> {
 			}
 			const preNode = target?.prev
 			const postNode = target?.next
-
+			
+			if(preNode) {
+				preNode.next = postNode
+			}
+			if(postNode) {
+				postNode.prev = preNode
+			}
+			if(target) {
+				target.next = undefined
+				target.prev = undefined
+			}
 			return target?.value
 		}
     get(idx: number): T | undefined | null {
@@ -89,5 +99,26 @@ export default class SinglyLinkedList<T> {
 			return curr?.value
 		}
     removeAt(idx: number): T | undefined {
+			let target = this.head
+
+			if(!this.head) {
+				return undefined
+			}
+			for (let i = 0; i < idx && target; i++) {
+				target = target.next
+			}
+			const preNode = target?.prev
+			const postNode = target?.next
+			if(preNode) {
+				preNode.next = postNode
+			}
+			if(postNode) {
+				postNode.prev = preNode
+			}
+			if(target) {
+				target.next = undefined
+				target.prev = undefined
+			}
+			return target?.value
 		}
 }
