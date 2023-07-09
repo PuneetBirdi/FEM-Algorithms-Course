@@ -1,7 +1,6 @@
 type Node<T> = {
 	value: T,
 	next?: Node<T>
-	prev?: Node<T>
 }
 export default class SinglyLinkedList<T> {
     public length: number
@@ -16,134 +15,116 @@ export default class SinglyLinkedList<T> {
 
     prepend(item: T): void {
 			const node = {value: item} as Node<T>
-			if(!this.head) {
+			this.length++
+			if(!this.head){
 				this.head = this.tail = node
 				return
 			}
-			const currHead = this.head
-			node.next = currHead
-			currHead.prev = node
+			node.next = this.head
 			this.head = node
-			this.length++
-			console.log("PREPEND", this)
 		}
     insertAt(item: T, idx: number): void {
 			const node = {value:item} as Node<T>
-			let targetNode = this.head
-
-			if(!this.head) {
+			this.length++
+			if(!this.head){
 				this.head = this.tail = node
 				return
 			}
-			for (let i = 0; i < idx && targetNode; i++) {
-				targetNode = targetNode.next
-			}
-			const preNode = targetNode?.prev
-			const postNode = targetNode?.next
 
-			if(preNode){
-				preNode.next = node
-				node.prev = preNode
+			let targetNode = this.head
+			for(let i = 0; i < idx - 1 && targetNode; i++){
+				if(targetNode.next){
+					targetNode = targetNode.next
+				}
 			}
-
-			if(postNode){
-				postNode.prev = node
-				node.next = postNode
-			}
-			this.length++
-			console.log("INSERT AT", this)
+			node.next = targetNode.next
+			targetNode.next = node
+			return
 		}
     append(item: T): void {
 			const node = {value: item} as Node<T>
-			if(!this.tail){
-				this.tail = this.head = node
+			this.length++
+			if(!this.tail) {
+				this.head = this.tail = node
+				return
 			}
 			this.tail.next = node
-			node.prev = this.tail
 			this.tail = node
-			this.length++
-			console.log("APPEND", this)
 		}
     remove(item: T): T | undefined {
-			let curr = this.head
-			let target
-
-			if(!this.head) {
+			if(!this.head){
 				return undefined
 			}
-
 			if(this.head.value === item){
-				this.head = this.head?.next
-				this.length = Math.max(0, this.length -1)
-				console.log("REMOVE", this)
-				return curr?.value
+				const target = this.head
+				this.head = this.head.next
+				this.length--
+				return target.value
 			}
-
-			for (let i = 0; i < this.length && curr; i++) {
-				curr = curr.next
-				if(curr?.value === item){
-					target = curr
+			
+			let currNode = this.head
+			for(let i = 0; i < this.length - 1 && currNode; i++){
+				if(currNode?.next?.value === item){
+					break
+				} else if(currNode.next){
+					currNode = currNode.next
+				} else {
+					return undefined
 				}
-				break
 			}
-			const preNode = target?.prev
-			const postNode = target?.next
-			if(target) {
-				if(preNode) {
-					preNode.next = postNode
-				}
-				if(postNode) {
-					postNode.prev = preNode
-				}
-				target.next = undefined
-				target.prev = undefined
-				this.length = Math.max(0, this.length -1)
+			const targetNode = currNode.next
+			let nextNode
+			if(targetNode?.next){
+				nextNode = targetNode.next
+				currNode.next = nextNode
 			}
-			console.log("REMOVE", this)
-			return target?.value
+			if(targetNode){
+				targetNode.next = undefined
+				this.length--
+				return targetNode.value
+			}else {
+				return undefined
+			}
 		}
     get(idx: number): T | undefined {
 			let curr = this.head
 
-			if(!this.head) {
-				return undefined
-			}
-			for (let i = 0; i < idx && curr; i++) {
+			for(let i = 0; i < idx && curr; i++) {
 				curr = curr.next
 			}
-			console.log("GET", this)
+			if(!curr) {
+				return undefined
+			}
 			return curr?.value
 		}
     removeAt(idx: number): T | undefined {
-			let target = this.head
-
-			if(!target) {
+			if(!this.head){
 				return undefined
 			}
 			if(idx === 0){
-				this.head = this.head?.next
-				this.length = Math.max(0, this.length -1)
-				return target.value
+				const currNode = this.head
+				this.head = this.head.next
+				this.length--
+				return currNode.value
 			}
-			for (let i = 0; i < idx && target; i++) {
-				target = target.next
+			let currNode = this.head
+			for(let i = 0; i < idx - 1 && currNode; i++){
+				if(currNode.next){
+					currNode = currNode.next
+				} else{
+					return undefined
+				}
 			}
-
-			const preNode = target?.prev
-			const postNode = target?.next
-
-			if(preNode) {
-				preNode.next = postNode
+			const targetNode = currNode.next
+			let nextNode
+			if(targetNode?.next){
+				nextNode = targetNode.next
+				currNode.next = nextNode
+				targetNode.next = undefined
+				this.length--
+				return targetNode.value
+			}else {
+				return undefined
 			}
-			if(postNode) {
-				postNode.prev = preNode
-			}
-			if(target) {
-				target.next = undefined
-				target.prev = undefined
-			}
-			this.length = Math.max(0, this.length -1)
-			console.log("REMOVE AT", this)
-			return target?.value
 		}
 }
