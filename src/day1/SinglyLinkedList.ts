@@ -55,25 +55,76 @@ export default class SinglyLinkedList<T> {
 			if(!this.head){
 				return undefined
 			}
+			if(this.head.value === item){
+				const target = this.head
+				this.head = this.head.next
+				this.length--
+				return target.value
+			}
 			
-			let targetNode = this.head
-			for(let i = 0; i < this.length && targetNode; i++){
-				if(targetNode.value === item){
+			let currNode = this.head
+			for(let i = 0; i < this.length - 1 && currNode; i++){
+				if(currNode?.next?.value === item){
 					break
-				} else if(targetNode.next){
-					targetNode = targetNode.next
+				} else if(currNode.next){
+					currNode = currNode.next
 				} else {
 					return undefined
 				}
 			}
-			return
+			const targetNode = currNode.next
+			let nextNode
+			if(targetNode?.next){
+				nextNode = targetNode.next
+				currNode.next = nextNode
+			}
+			if(targetNode){
+				targetNode.next = undefined
+				this.length--
+				return targetNode.value
+			}else {
+				return undefined
+			}
 		}
     get(idx: number): T | undefined {
 			let curr = this.head
+
+			for(let i = 0; i < idx && curr; i++) {
+				curr = curr.next
+			}
+			if(!curr) {
+				return undefined
+			}
 			return curr?.value
 		}
     removeAt(idx: number): T | undefined {
-			let target = this.head
-			return target?.value
+			if(!this.head){
+				return undefined
+			}
+			if(idx === 0){
+				const currNode = this.head
+				this.head = this.head.next
+				this.length--
+				return currNode.value
+			}
+			let currNode = this.head
+			for(let i = 0; i < idx - 1 && currNode; i++){
+				if(currNode.next){
+					currNode = currNode.next
+				} else{
+					return undefined
+				}
+			}
+			const targetNode = currNode.next
+			let nextNode
+			if(targetNode?.next){
+				nextNode = targetNode.next
+				currNode.next = nextNode
+				targetNode.next = undefined
+				this.length--
+				return targetNode.value
+			}else {
+				return undefined
+			}
 		}
 }
