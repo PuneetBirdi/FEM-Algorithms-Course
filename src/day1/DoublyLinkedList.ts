@@ -26,8 +26,45 @@ export default class DoublyLinkedList<T> {
 			currHead.prev = node
 		}
     insertAt(item: T, idx: number): void {
+			const node = { value: item } as Node<T>
+			if(!this.head || !this.tail){
+				this.head = this.tail = node
+				this.length++
+				return
+			}
+			if(idx === 0){
+				const currHead = this.head
+				currHead.prev = node
+				node.next = currHead
+				this.head = node
+				this.length++
+				return
+			}
+			if(idx === this.length - 1){
+				const currTail = this.tail
+				currTail.next = node
+				node.prev = currTail
+				this.tail = node
+				this.length++
+				return
+			}
 
-}
+			let targetNode = this.head
+			for(let i = 0; i < idx - 1 && targetNode; i++){
+				if(targetNode.next){
+					targetNode = targetNode.next
+				}
+			}
+			const prevNode = targetNode.prev
+			if(prevNode){
+				prevNode.next = node
+			}
+			targetNode.prev = node
+			node.prev = prevNode
+			node.next = targetNode
+			this.length++
+			return
+		}
     append(item: T): void {
 			const node = { value: item } as Node<T>
 			if(!this.tail){
@@ -66,10 +103,15 @@ export default class DoublyLinkedList<T> {
 			}
 			const prevNode = curr.prev
 			const nextNode = curr.next
-			prevNode.next = nextNode
-			nextNode.prev = prevNode
+			if(prevNode){
+				prevNode.next = nextNode
+			}
+			if(nextNode){
+				nextNode.prev = prevNode
+			}
 			curr.prev = undefined
 			curr.next = undefined
+			this.length--
 			return curr.value
 		}
     get(idx: number): T | undefined {
@@ -95,6 +137,38 @@ export default class DoublyLinkedList<T> {
 			return curr?.value
 		}
     removeAt(idx: number): T | undefined {
+			if(!this.head || !this.tail){
+				return undefined
+			}
+			if(idx === 0){
+				const currNode = this.head
+				const nextNode = this.head.next
+				if(nextNode){
+					nextNode.prev = undefined
+				}
+				this.head = this.head.next
+				this.length--
+				return currNode.value
+			}
 
-}
+			let currNode = this.head
+			for(let i = 0; i < idx - 1 && currNode; i++){
+				if(currNode.next){
+					currNode = currNode.next
+				} else{
+					return undefined
+				}
+			}
+			const targetNode = currNode.next
+			let nextNode
+			if(targetNode?.next){
+				nextNode = targetNode.next
+				currNode.next = nextNode
+				targetNode.next = undefined
+				this.length--
+				return targetNode.value
+			}else {
+				return undefined
+			}
+		}
 }
