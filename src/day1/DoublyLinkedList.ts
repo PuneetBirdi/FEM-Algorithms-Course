@@ -15,6 +15,7 @@ export default class DoublyLinkedList<T> {
     }
 
     prepend(item: T): void {
+			console.log(this)
 			const node = { value: item } as Node<T>
 
 			if(!this.head || !this.tail){
@@ -90,7 +91,69 @@ export default class DoublyLinkedList<T> {
 			this.length++
 		}
     remove(item: T): T | undefined {
-			return undefined
+			if(!this.head || !this.tail){
+				return undefined
+			}
+
+			//Remove Head
+			if(this.head.value === item){
+				const currentHead = this.head
+				if(!currentHead.next){
+					this.head = undefined
+					this.tail = undefined
+					this.length--
+					return currentHead.value
+				}
+				const newHead = currentHead.next
+				newHead.prev = undefined
+				currentHead.next = undefined
+				this.head = newHead
+				this.length--
+				return currentHead.value
+			}
+
+			//Remove tail
+			if(this.tail.value === item){
+				const currentTail = this.tail
+				if(!currentTail.prev){
+					this.length--
+					return currentTail.value
+				}
+				const newTail = currentTail.prev
+				newTail.prev = undefined
+				this.tail = newTail
+				this.length--
+				return currentTail.value
+			}
+
+			//Remove inbetweens
+			let targetNode = this.head
+			for(let i = 0; i < this.length - 1 && targetNode; i++){
+				if(targetNode.value === item){
+					break
+				}
+				if(targetNode.next){
+					targetNode = targetNode.next
+				}
+				if(!targetNode.next){
+					return undefined
+				}
+			}
+			const prevNode = targetNode.prev
+			const nextNode = targetNode.next
+
+			if(prevNode){
+				prevNode.next = nextNode
+			}
+			if(nextNode){
+				nextNode.prev = prevNode
+			}
+			targetNode.next = undefined
+			targetNode.prev = undefined
+
+			this.length--
+			return targetNode.value
+
 		}
     get(idx: number): T | undefined {
 			if(!this.head || !this.tail || (idx > this.length - 1)){
@@ -120,6 +183,8 @@ export default class DoublyLinkedList<T> {
 			if(idx === 0){
 				const currentHead = this.head
 				if(!currentHead.next){
+					this.head = undefined
+					this.tail = undefined
 					this.length--
 					return currentHead.value
 				}
@@ -147,15 +212,14 @@ export default class DoublyLinkedList<T> {
 
 			//Remove inbetweens
 			let targetNode = this.head
-			for(let i = 0; i < idx - 1 && targetNode; i++){
-				console.log('WHHHHHHHHHHHHHHHHHHHHHHHHHYYYYYYYYYYYYYYY')
+			for(let i = 0; i < idx; i++){
 				if(targetNode.next){
 					targetNode = targetNode.next
 				}
 			}
 			const prevNode = targetNode.prev
 			const nextNode = targetNode.next
-			console.log(targetNode)
+
 			if(prevNode){
 				prevNode.next = nextNode
 			}
