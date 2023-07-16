@@ -5,6 +5,7 @@ const dir = [
 	[0, 1]
 ]
 function walk(maze: string[], wall: string, curr: Point, end: Point, seen: boolean[][], path: Point[]): boolean {
+	console.log('INNER PATH', path)
 	//1. Base Case : off the map
 	if(curr.x < 0 || curr.x >= maze[0].length ||
 		 curr.y < 0|| curr.y >= maze.length) {
@@ -51,7 +52,6 @@ export default function solve(maze: string[], wall: string, start: Point, end: P
 	for (let i = 0; i < maze.length; ++i){
 		seen.push(new Array(maze[0].length).fill(false))
 	}
-
 	walk(maze, wall, start, end, seen, path)
 
 	return path
